@@ -154,78 +154,37 @@ function FallingFigure({ className = '' }) {
 }
 
 function IntroScene({ onDone, reduced }) {
-  const [phase, setPhase] = useState('seed');
+  const [exiting, setExiting] = useState(false);
   useEffect(() => {
     if (reduced) {
-      const id = window.setTimeout(onDone, 1200);
+      const id = window.setTimeout(onDone, 900);
       return () => window.clearTimeout(id);
     }
     const timers = [
-      window.setTimeout(() => setPhase('forming'), 120),
-      window.setTimeout(() => setPhase('eye'), 780),
-      window.setTimeout(() => setPhase('question'), 1650),
-      window.setTimeout(() => setPhase('impulse'), 2850),
-      window.setTimeout(() => setPhase('closing'), 3950),
-      window.setTimeout(onDone, 5000)
+      window.setTimeout(() => setExiting(true), 2450),
+      window.setTimeout(onDone, 3200)
     ];
     return () => timers.forEach(window.clearTimeout);
   }, [onDone, reduced]);
 
   return (
-    <section className={`intro-scene intro-stage-${phase}`} aria-label="Кто он?">
+    <section className={`intro-scene intro-reference ${exiting ? 'is-exiting' : ''}`} aria-label="Кто он?" onClick={onDone}>
+      <img className="intro-face" src={asset('eye-source.jpg')} alt="" aria-hidden="true" />
       <div className="intro-grain" aria-hidden="true" />
-      <FallingFigure className="intro-figure" />
-      <div className="intro-brand" aria-label="TheXilliX">The<span>Xilli</span>X</div>
-      <div className="intro-eye" aria-hidden="true">
-        <div className="eye-frame"><span className="eye-iris"><i /></span></div>
-      </div>
-      <div className="intro-question" aria-label="Кто он?">
-        <span>КТО</span><span>ОН?</span>
+      <div className="intro-brand" aria-label="TheXilliX">TheXilliX</div>
+      <h1 className="intro-question"><span>КТО</span><span>ОН?</span></h1>
+      <div className="intro-eye-window" aria-hidden="true">
+        <img src={asset('eye-source.jpg')} alt="" />
       </div>
       <div className="intro-arrow" aria-hidden="true"><i /></div>
-      <div className="intro-coordinate" aria-hidden="true">IDENTITY / 01</div>
-      <button className="intro-skip" onClick={onDone} aria-label="Перейти к меню">Пропустить →</button>
     </section>
   );
 }
 
 function WhiteMenu({ onNavigate }) {
-  const host = useRef(null);
-  const [hovered, setHovered] = useState(null);
-
-  const move = (event) => {
-    const rect = host.current?.getBoundingClientRect();
-    if (!rect) return;
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-    host.current.style.setProperty('--mx', `${x * 10}px`);
-    host.current.style.setProperty('--my', `${y * 8}px`);
-  };
-
   return (
-    <main className="white-menu" ref={host} onPointerMove={move}>
-      <div className="menu-grain" aria-hidden="true" />
-      <div className="menu-orbit" aria-hidden="true"><i /><i /><i /></div>
-      <FallingFigure className="menu-figure" />
-      <header className="menu-header">
-        <span>TheXilliX</span><span>INDEX / 01</span><span>SELECT A DIRECTION</span>
-      </header>
-      <div className="menu-title"><ParticleTitle /></div>
-      <nav className="white-menu-links" aria-label="Главное меню">
-        {menuItems.map((item, index) => (
-          <button
-            key={item.id}
-            className={hovered === item.id ? 'is-hovered' : ''}
-            style={{ '--index': index }}
-            onPointerEnter={() => { setHovered(item.id); sound.tick(300 + index * 45, 0.055, 0.035); }}
-            onPointerLeave={() => setHovered(null)}
-            onClick={() => onNavigate(item.id, 'white')}
-          >
-            <em>0{index + 1}</em><span>{item.label}</span><i aria-hidden="true" /><b>↗</b>
-          </button>
-        ))}
-      </nav>
-      <footer className="menu-footer"><span>THEXILLIX © 2026</span><span>выбери направление</span></footer>
+    <main className="menu-placeholder" aria-label="Меню">
+      <span>МЕНЮ</span>
     </main>
   );
 }
@@ -343,7 +302,7 @@ function PosterPage({ id, onOpenMenu }) {
 export default function App() {
   const reduced = useReducedMotion();
   const [route, setRoute] = useState(getHashRoute);
-  const [intro, setIntro] = useState(() => getHashRoute() === 'home' && sessionStorage.getItem('thexillix-intro-v2-seen') !== 'yes');
+  const [intro, setIntro] = useState(() => getHashRoute() === 'home' && sessionStorage.getItem('thexillix-intro-v3-seen') !== 'yes');
   const [transition, setTransition] = useState(null);
   const [transitionStage, setTransitionStage] = useState('enter');
   const [overlayOpen, setOverlayOpen] = useState(false);
@@ -362,7 +321,7 @@ export default function App() {
   }, []);
 
   const completeIntro = useCallback(() => {
-    sessionStorage.setItem('thexillix-intro-v2-seen', 'yes');
+    sessionStorage.setItem('thexillix-intro-v3-seen', 'yes');
     setIntro(false);
   }, []);
 
