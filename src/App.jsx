@@ -140,30 +140,50 @@ function ParticleTitle({ text = 'МЕНЮ' }) {
   return <div className="particle-title" ref={hostRef}><canvas ref={canvasRef} aria-label={text} /></div>;
 }
 
+function FallingFigure({ className = '' }) {
+  return (
+    <div className={`falling-figure ${className}`} aria-hidden="true">
+      <i className="figure-head" />
+      <i className="figure-torso" />
+      <i className="figure-arm figure-arm-left" />
+      <i className="figure-arm figure-arm-right" />
+      <i className="figure-leg figure-leg-left" />
+      <i className="figure-leg figure-leg-right" />
+    </div>
+  );
+}
+
 function IntroScene({ onDone, reduced }) {
-  const [phase, setPhase] = useState('forming');
+  const [phase, setPhase] = useState('seed');
   useEffect(() => {
     if (reduced) {
-      const id = window.setTimeout(onDone, 900);
+      const id = window.setTimeout(onDone, 1200);
       return () => window.clearTimeout(id);
     }
     const timers = [
-      window.setTimeout(() => setPhase('open'), 520),
-      window.setTimeout(() => setPhase('question'), 1450),
-      window.setTimeout(() => setPhase('closing'), 3850),
-      window.setTimeout(onDone, 4850)
+      window.setTimeout(() => setPhase('forming'), 120),
+      window.setTimeout(() => setPhase('eye'), 780),
+      window.setTimeout(() => setPhase('question'), 1650),
+      window.setTimeout(() => setPhase('impulse'), 2850),
+      window.setTimeout(() => setPhase('closing'), 3950),
+      window.setTimeout(onDone, 5000)
     ];
     return () => timers.forEach(window.clearTimeout);
   }, [onDone, reduced]);
 
   return (
-    <section className={`intro-scene intro-${phase}`} aria-label="Кто он?">
-      <picture className="intro-picture">
-        <source media="(max-width: 700px)" srcSet={asset('posters/intro-mobile.webp')} />
-        <img src={asset('posters/intro-desktop.webp')} alt="Кто он?" />
-      </picture>
-      <div className="intro-curtain intro-curtain-top" />
-      <div className="intro-curtain intro-curtain-bottom" />
+    <section className={`intro-scene intro-stage-${phase}`} aria-label="Кто он?">
+      <div className="intro-grain" aria-hidden="true" />
+      <FallingFigure className="intro-figure" />
+      <div className="intro-brand" aria-label="TheXilliX">The<span>Xilli</span>X</div>
+      <div className="intro-eye" aria-hidden="true">
+        <div className="eye-frame"><span className="eye-iris"><i /></span></div>
+      </div>
+      <div className="intro-question" aria-label="Кто он?">
+        <span>КТО</span><span>ОН?</span>
+      </div>
+      <div className="intro-arrow" aria-hidden="true"><i /></div>
+      <div className="intro-coordinate" aria-hidden="true">IDENTITY / 01</div>
       <button className="intro-skip" onClick={onDone} aria-label="Перейти к меню">Пропустить →</button>
     </section>
   );
@@ -184,11 +204,13 @@ function WhiteMenu({ onNavigate }) {
 
   return (
     <main className="white-menu" ref={host} onPointerMove={move}>
-      <picture className="menu-art" aria-hidden="true">
-        <source media="(max-width: 700px)" srcSet={asset('posters/menu-mobile.webp')} />
-        <img src={asset('posters/menu-desktop.webp')} alt="" />
-      </picture>
-      <div className="menu-title-patch"><ParticleTitle /></div>
+      <div className="menu-grain" aria-hidden="true" />
+      <div className="menu-orbit" aria-hidden="true"><i /><i /><i /></div>
+      <FallingFigure className="menu-figure" />
+      <header className="menu-header">
+        <span>TheXilliX</span><span>INDEX / 01</span><span>SELECT A DIRECTION</span>
+      </header>
+      <div className="menu-title"><ParticleTitle /></div>
       <nav className="white-menu-links" aria-label="Главное меню">
         {menuItems.map((item, index) => (
           <button
@@ -199,11 +221,11 @@ function WhiteMenu({ onNavigate }) {
             onPointerLeave={() => setHovered(null)}
             onClick={() => onNavigate(item.id, 'white')}
           >
-            <span>{item.label}</span><i aria-hidden="true" />
+            <em>0{index + 1}</em><span>{item.label}</span><i aria-hidden="true" /><b>↗</b>
           </button>
         ))}
       </nav>
-      <p className="menu-hint">выбери направление</p>
+      <footer className="menu-footer"><span>THEXILLIX © 2026</span><span>выбери направление</span></footer>
     </main>
   );
 }
