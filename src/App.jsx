@@ -343,7 +343,7 @@ function PosterPage({ id, onOpenMenu }) {
 export default function App() {
   const reduced = useReducedMotion();
   const [route, setRoute] = useState(getHashRoute);
-  const [intro, setIntro] = useState(() => getHashRoute() === 'home' && sessionStorage.getItem('thexillix-intro-seen') !== 'yes');
+  const [intro, setIntro] = useState(() => getHashRoute() === 'home' && sessionStorage.getItem('thexillix-intro-v2-seen') !== 'yes');
   const [transition, setTransition] = useState(null);
   const [transitionStage, setTransitionStage] = useState('enter');
   const [overlayOpen, setOverlayOpen] = useState(false);
@@ -362,7 +362,7 @@ export default function App() {
   }, []);
 
   const completeIntro = useCallback(() => {
-    sessionStorage.setItem('thexillix-intro-seen', 'yes');
+    sessionStorage.setItem('thexillix-intro-v2-seen', 'yes');
     setIntro(false);
   }, []);
 
